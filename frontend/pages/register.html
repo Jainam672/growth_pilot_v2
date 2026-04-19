@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GrowthPilot – Create Account</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#0a0a0f;--cream:#f5f0e8;--amber:#f5a623;--amber-deep:#d4860a;--sage:#2d4a3e;--sage-light:#3d6b5a;--panel:#111118;--border:rgba(255,255,255,0.07);}
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--ink);color:var(--cream);font-family:'DM Sans',sans-serif;min-height:100vh;display:grid;grid-template-columns:1fr 1fr;}
+  .brand{background:linear-gradient(145deg,rgba(45,74,62,0.55),rgba(245,166,35,0.07));border-right:1px solid var(--border);display:flex;flex-direction:column;justify-content:center;padding:64px;position:relative;overflow:hidden;}
+  .brand::before{content:'';position:absolute;top:-100px;right:-100px;width:550px;height:550px;background:radial-gradient(circle,rgba(45,74,62,0.5),transparent 70%);pointer-events:none;}
+  .b-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;margin-bottom:48px;position:relative;z-index:1;text-decoration:none;color:var(--cream);}
+  .b-logo span{color:var(--amber);}
+  .b-title{font-family:'Syne',sans-serif;font-size:clamp(36px,3vw,52px);font-weight:800;line-height:1.05;letter-spacing:-2px;margin-bottom:20px;position:relative;z-index:1;}
+  .b-title .accent{color:var(--amber);}
+  .b-sub{font-size:15px;color:rgba(245,240,232,0.5);line-height:1.7;font-weight:300;max-width:380px;margin-bottom:40px;position:relative;z-index:1;}
+  .b-feats{display:flex;flex-direction:column;gap:14px;position:relative;z-index:1;}
+  .b-feat{display:flex;align-items:center;gap:12px;font-size:14px;color:rgba(245,240,232,0.65);}
+  .b-dot{width:7px;height:7px;border-radius:50%;background:var(--amber);flex-shrink:0;}
+  .form-side{display:flex;align-items:center;justify-content:center;padding:48px 40px;overflow-y:auto;}
+  .box{width:100%;max-width:440px;}
+  .box h1{font-family:'Syne',sans-serif;font-size:30px;font-weight:800;letter-spacing:-1px;margin-bottom:6px;}
+  .box .sub{font-size:14px;color:rgba(245,240,232,0.45);margin-bottom:32px;font-weight:300;}
+  .grp{margin-bottom:18px;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .lbl{display:block;font-size:11px;font-weight:700;color:rgba(245,240,232,0.4);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
+  .iw{position:relative;}
+  .ico{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:14px;color:rgba(245,240,232,0.3);pointer-events:none;}
+  .field,.sel{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:var(--cream);border-radius:8px;padding:13px 14px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .2s,box-shadow .2s;}
+  .field{padding-left:40px;}
+  .field:focus,.sel:focus{border-color:rgba(245,166,35,0.5);box-shadow:0 0 0 3px rgba(245,166,35,0.08);}
+  .field::placeholder{color:rgba(245,240,232,0.22);}
+  .field[readonly]{background:rgba(255,255,255,0.02);color:rgba(245,240,232,0.5);cursor:not-allowed;}
+  .sel option{background:#1a1a25;}
+  .eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:rgba(245,240,232,0.3);font-size:15px;padding:4px;transition:color .2s;}
+  .pw-bar{height:3px;border-radius:2px;background:rgba(255,255,255,0.08);margin-top:6px;overflow:hidden;}
+  .pw-fill{height:100%;width:0;border-radius:2px;transition:all .3s;}
+  .pw-hint{font-size:11px;margin-top:3px;height:14px;transition:color .3s;}
+  .btn{width:100%;background:var(--amber);color:var(--ink);border:none;border-radius:8px;padding:14px;font-family:'Syne',sans-serif;font-weight:800;font-size:16px;cursor:pointer;transition:all .2s;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px;}
+  .btn:hover{background:var(--amber-deep);transform:translateY(-1px);box-shadow:0 8px 24px rgba(245,166,35,0.25);}
+  .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none;}
+  .err{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#f87171;border-radius:8px;padding:11px 14px;font-size:13px;margin-bottom:20px;display:none;align-items:center;gap:8px;}
+  .divider{display:flex;align-items:center;gap:12px;margin:24px 0;color:rgba(245,240,232,0.2);font-size:12px;}
+  .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+  .link{text-align:center;font-size:13px;color:rgba(245,240,232,0.4);margin-top:16px;}
+  .link a{color:var(--amber);text-decoration:none;font-weight:600;}
+  .spin{width:16px;height:16px;border:2px solid rgba(10,10,15,0.25);border-top-color:var(--ink);border-radius:50%;animation:spin .6s linear infinite;display:none;}
+  .step-indicator{font-size:12px;color:rgba(245,240,232,0.4);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+  .step-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.2);}
+  .step-dot.active{background:var(--amber);box-shadow:0 0 8px rgba(245,166,35,0.5);}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @media(max-width:768px){body{grid-template-columns:1fr;}.brand{display:none;}.row2{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="brand">
+  <a href="../index.html" class="b-logo">Growth<span>Pilot</span></a>
+  <h2 class="b-title">Start For<br><span class="accent">Free</span><br>Today</h2>
+  <p class="b-sub">Join thousands of entrepreneurs using AI to validate and launch their business ideas faster.</p>
+  <div class="b-feats">
+    <div class="b-feat"><div class="b-dot"></div>No credit card required</div>
+    <div class="b-feat"><div class="b-dot"></div>Instant AI analysis</div>
+    <div class="b-feat"><div class="b-dot"></div>Multilingual support</div>
+    <div class="b-feat"><div class="b-dot"></div>Voice input enabled</div>
+  </div>
+</div>
+<div class="form-side">
+  <div class="box">
+    <h1>Create Account</h1>
+    <p class="sub">Analyze your business ideas dynamically</p>
+    <div class="err" id="errBar">⚠️ <span id="errMsg"></span></div>
+
+    <!-- STEP 1: Core Account Details -->
+    <div id="step1">
+      <div class="step-indicator">
+        <div class="step-dot active"></div><div class="step-dot"></div>
+        <span>Step 1 of 2: Basics</span>
+      </div>
+
+      <div class="grp">
+        <label class="lbl">Full Name</label>
+        <div class="iw"><span class="ico">👤</span>
+        <input type="text" class="field" id="name" placeholder="Your full name" autocomplete="name"></div>
+      </div>
+      <div class="grp">
+        <label class="lbl">Email Address</label>
+        <div class="iw"><span class="ico">✉</span>
+        <input type="email" class="field" id="email" placeholder="you@example.com" autocomplete="email"></div>
+      </div>
+      <div class="row2">
+        <div class="grp">
+          <label class="lbl">Password</label>
+          <div class="iw">
+            <input type="password" class="field" id="password" placeholder="Min 6 chars" style="padding-left:14px">
+            <button type="button" class="eye" id="eyeBtn">👁</button>
+          </div>
+          <div class="pw-bar"><div class="pw-fill" id="pwFill"></div></div>
+          <div class="pw-hint" id="pwHint"></div>
+        </div>
+        <div class="grp">
+          <label class="lbl">Confirm Password</label>
+          <div class="iw">
+            <input type="password" class="field" id="confirm_password" placeholder="Repeat password" style="padding-left:14px">
+          </div>
+        </div>
+      </div>
+      
+      <button class="btn" type="button" onclick="nextStep()">Next Content &rarr;</button>
+
+      <div class="divider">or</div>
+      <div class="link">Already have an account? <a href="login.html">Log in</a></div>
+      <div class="link" style="margin-top:8px"><a href="../index.html" style="color:rgba(245,240,232,0.3);font-size:12px">← Back to Home</a></div>
+    </div>
+
+    <!-- STEP 2: Demographics & Profile -->
+    <div id="step2" style="display:none;">
+      <div class="step-indicator">
+        <div class="step-dot"></div><div class="step-dot active"></div>
+        <span>Step 2 of 2: Profile</span>
+      </div>
+
+      <div class="grp">
+        <label class="lbl">Language</label>
+        <select class="sel" id="language" style="width:100%">
+          <option value="en">🇬🇧 English</option>
+          <option value="hi">🇮🇳 Hindi</option>
+          <option value="gu">🇮🇳 Gujarati</option>
+          <option value="mr">🇮🇳 Marathi</option>
+          <option value="ta">🇮🇳 Tamil</option>
+          <option value="te">🇮🇳 Telugu</option>
+        </select>
+      </div>
+
+      <div class="row2">
+        <div class="grp">
+          <label class="lbl">Birthdate</label>
+          <div class="iw">
+            <input type="date" class="field" id="birthdate" style="padding-left:14px">
+          </div>
+        </div>
+        <div class="grp">
+          <label class="lbl">Age</label>
+          <div class="iw">
+            <input type="number" class="field" id="age" placeholder="Auto-computed" style="padding-left:14px" readonly title="Select birthdate to calculate">
+          </div>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="grp">
+          <label class="lbl">City</label>
+          <div class="iw">
+            <input type="text" class="field" id="city" placeholder="e.g. Mumbai" style="padding-left:14px">
+          </div>
+        </div>
+        <div class="grp">
+          <label class="lbl">State</label>
+          <div class="iw">
+            <input type="text" class="field" id="state" placeholder="e.g. Maharashtra" style="padding-left:14px">
+          </div>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="grp">
+          <label class="lbl">Country</label>
+          <div class="iw">
+            <input type="text" class="field" id="country" placeholder="e.g. India" style="padding-left:14px">
+          </div>
+        </div>
+        <div class="grp">
+          <label class="lbl">Mobile Number</label>
+          <div class="iw">
+            <input type="tel" class="field" id="mobile" placeholder="e.g. +91..." style="padding-left:14px">
+          </div>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="grp">
+          <label class="lbl">Gender</label>
+          <select class="sel" id="gender">
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Others">Others</option>
+          </select>
+        </div>
+        <div class="grp">
+          <label class="lbl">Income</label>
+          <div class="iw">
+            <input type="text" class="field" id="income" placeholder="e.g. $50,000" style="padding-left:14px">
+          </div>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="grp">
+          <label class="lbl">Professional Status</label>
+          <select class="sel" id="profession">
+            <option value="Student">Student</option>
+            <option value="Job">Job</option>
+            <option value="Fresher">Fresher</option>
+            <option value="Intern">Intern</option>
+            <option value="Experienced">Experienced</option>
+          </select>
+        </div>
+        <div class="grp">
+          <label class="lbl">Tool Usage</label>
+          <select class="sel" id="usage_purpose">
+            <option value="Developing">Developing</option>
+            <option value="Testing">Testing</option>
+            <option value="Research">Research</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grp">
+        <label class="lbl">Business Interest</label>
+        <div class="iw">
+          <input type="text" class="field" id="interest" placeholder="e.g. AI SaaS, D2C Brand..." style="padding-left:14px">
+        </div>
+      </div>
+
+      <div class="row2" style="margin-top:24px;">
+        <button class="btn" type="button" style="background:rgba(255,255,255,0.08);color:var(--cream);border:1px solid rgba(255,255,255,0.1);" onclick="prevStep()">
+          &larr; Back
+        </button>
+        <button class="btn" id="submitBtn" onclick="doRegister()">
+          <span id="btnTxt">Create Account →</span><div class="spin" id="spin"></div>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="../js/api.js"></script>
+<script>
+  if (isLoggedIn()) window.location.href = "dashboard.html";
+
+  document.getElementById("eyeBtn").onclick = function() {
+    const f = document.getElementById("password");
+    f.type = f.type === "password" ? "text" : "password";
+    this.textContent = f.type === "password" ? "👁" : "🙈";
+  };
+
+  document.getElementById("password").addEventListener("input", function() {
+    const v = this.value; let s = 0;
+    if (v.length >= 6) s++; if (v.length >= 10) s++;
+    if (/[A-Z]/.test(v)) s++; if (/[0-9]/.test(v)) s++; if (/[^A-Za-z0-9]/.test(v)) s++;
+    const cols = ["#ef4444","#f97316","#eab308","#22c55e","#f5a623"];
+    const labs = ["Weak","Fair","Good","Strong","Very Strong"];
+    const fill = document.getElementById("pwFill"), hint = document.getElementById("pwHint");
+    fill.style.width = (s * 20) + "%"; fill.style.background = cols[s-1] || "transparent";
+    hint.textContent = labs[s-1] || ""; hint.style.color = cols[s-1] || "transparent";
+  });
+
+  // Calculate age when birthdate changes
+  document.getElementById("birthdate").addEventListener("change", function() {
+    if(!this.value) {
+      document.getElementById("age").value = "";
+      return;
+    }
+    const bdate = new Date(this.value);
+    const diff = Date.now() - bdate.getTime();
+    if(diff > 0) {
+      const computedAge = Math.abs(new Date(diff).getUTCFullYear() - 1970);
+      document.getElementById("age").value = computedAge;
+    }
+  });
+
+  function showErr(msg) {
+    document.getElementById("errMsg").textContent = msg;
+    document.getElementById("errBar").style.display = "flex";
+  }
+
+  function nextStep() {
+    const name  = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const pw    = document.getElementById("password").value;
+    const confirm = document.getElementById("confirm_password").value;
+
+    document.getElementById("errBar").style.display = "none";
+
+    if (!name)       { showErr("Please enter your full name."); return; }
+    if (!email)      { showErr("Please enter your email address."); return; }
+    if (!email.includes("@") || email.split("@")[1].indexOf(".") <= 0) { 
+      showErr("Please enter a valid email address."); return; 
+    }
+    if (pw.length < 6) { showErr("Password must be at least 6 characters."); return; }
+    if (pw !== confirm) { showErr("Passwords do not match."); return; }
+
+    document.getElementById("step1").style.display = "none";
+    document.getElementById("step2").style.display = "block";
+  }
+
+  function prevStep() {
+    document.getElementById("errBar").style.display = "none";
+    document.getElementById("step2").style.display = "none";
+    document.getElementById("step1").style.display = "block";
+  }
+
+  async function doRegister() {
+    // Collect all data from step 1 & 2
+    const name  = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const pw    = document.getElementById("password").value;
+    // Step 2 variables
+    const lang  = document.getElementById("language").value;
+    const age   = document.getElementById("age").value;
+    const birthdate = document.getElementById("birthdate").value;
+    const city  = document.getElementById("city").value.trim();
+    const state = document.getElementById("state").value.trim();
+    const country = document.getElementById("country").value.trim();
+    const mobile = document.getElementById("mobile").value.trim();
+    const gender = document.getElementById("gender").value;
+    const income = document.getElementById("income").value.trim();
+    const prof  = document.getElementById("profession").value;
+    const usage = document.getElementById("usage_purpose").value;
+    const intr  = document.getElementById("interest").value.trim();
+    
+    const btn   = document.getElementById("submitBtn");
+    const lbl   = document.getElementById("btnTxt");
+    const sp    = document.getElementById("spin");
+
+    document.getElementById("errBar").style.display = "none";
+
+    // Validate step 2 required fields
+    if (!birthdate) { showErr("Please enter your birthdate."); return; }
+    if (!city) { showErr("Please enter your city."); return; }
+    if (!state) { showErr("Please enter your state."); return; }
+    if (!country) { showErr("Please enter your country."); return; }
+    if (!mobile) { showErr("Please enter your mobile number."); return; }
+    if (!income) { showErr("Please enter your income."); return; }
+    if (!intr) { showErr("Please enter your business interest."); return; }
+
+    btn.disabled = true; lbl.style.display = "none"; sp.style.display = "block";
+    try {
+      const d = await api.register(name, email, pw, lang, age, city, prof, "", intr, income, birthdate, state, country, mobile, gender, usage);
+      saveAuth(d.access_token, d.user_id, d.name, d.email);
+      window.location.href = "dashboard.html";
+    } catch(e) {
+      showErr(e.message || "Registration failed. Please try again.");
+      btn.disabled = false; lbl.style.display = "block"; sp.style.display = "none";
+    }
+  }
+</script>
+</body>
+</html>

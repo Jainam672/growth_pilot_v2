@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GrowthPilot – My Reports</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#0a0a0f;--cream:#f5f0e8;--amber:#f5a623;--amber-deep:#d4860a;--sage:#2d4a3e;--sage-light:#3d6b5a;--panel:#111118;--card:#13131d;--border:rgba(255,255,255,0.07);}
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--ink);color:var(--cream);font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;}
+  .sidenav{width:220px;flex-shrink:0;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:28px 0;position:fixed;top:0;bottom:0;left:0;z-index:20;}
+  .sidenav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:var(--cream);text-decoration:none;padding:0 20px;margin-bottom:40px;display:block;}
+  .sidenav-logo span{color:var(--amber);}
+  .nav-section{margin-bottom:32px;}
+  .nav-section-label{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(245,240,232,0.25);padding:0 20px;margin-bottom:8px;font-weight:600;}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:9px 20px;margin:0 8px;border-radius:8px;color:rgba(245,240,232,0.5);font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;text-decoration:none;}
+  .nav-item:hover{background:rgba(255,255,255,.04);color:var(--cream);}
+  .nav-item.active{background:rgba(245,166,35,.12);color:var(--amber);font-weight:600;}
+  .sidenav-bottom{margin-top:auto;padding:0 12px;}
+  .new-analysis-btn{width:100%;padding:11px;border-radius:10px;background:var(--amber);border:none;cursor:pointer;font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--ink);transition:all .2s;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px;}
+  .new-analysis-btn:hover{background:var(--amber-deep);}
+  .main{margin-left:220px;flex:1;display:flex;flex-direction:column;}
+  .topbar{height:64px;background:var(--panel);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 32px;flex-shrink:0;position:sticky;top:0;z-index:10;}
+  .topbar-title{font-family:'Syne',sans-serif;font-weight:700;font-size:18px;}
+  .topbar-title span{color:rgba(245,240,232,0.4);font-weight:400;font-size:14px;margin-left:8px;font-family:'DM Sans',sans-serif;}
+  .content{padding:32px;flex:1;}
+  .toolbar{display:flex;gap:12px;align-items:center;margin-bottom:24px;flex-wrap:wrap;}
+  .search-box{flex:1;min-width:200px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 16px;color:var(--cream);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;}
+  .search-box:focus{border-color:rgba(245,166,35,.4);}
+  .search-box::placeholder{color:rgba(245,240,232,0.3);}
+  .filter-sel{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--cream);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;cursor:pointer;}
+  .filter-sel option{background:#1a1a25;}
+  .idea-table{width:100%;border-collapse:collapse;}
+  .idea-table th{text-align:left;padding:12px 16px;font-size:11px;color:rgba(245,240,232,0.35);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);font-weight:600;}
+  .idea-table td{padding:16px;border-bottom:1px solid rgba(255,255,255,.03);font-size:14px;vertical-align:middle;}
+  .idea-table tr:hover td{background:rgba(255,255,255,.02);}
+  .idea-table tr{cursor:pointer;transition:background .15s;}
+  .badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:600;}
+  .badge.analyzed{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.25);}
+  .badge.pending{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.25);}
+  .cat-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:600;background:rgba(245,166,35,.1);color:var(--amber);border:1px solid rgba(245,166,35,.2);}
+  .action-btn{padding:5px 12px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .2s;font-family:'Syne',sans-serif;text-decoration:none;display:inline-flex;align-items:center;gap:4px;}
+  .action-btn.view{background:var(--amber);color:var(--ink);}
+  .action-btn.view:hover{background:var(--amber-deep);}
+  .action-btn.del{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+  .action-btn.del:hover{background:rgba(239,68,68,.2);}
+  .empty-state{text-align:center;padding:80px 20px;color:rgba(245,240,232,0.3);}
+  .empty-state .es-icon{font-size:56px;margin-bottom:20px;}
+  .empty-state .es-title{font-family:'Syne',sans-serif;font-size:22px;margin-bottom:12px;color:rgba(245,240,232,0.5);}
+  @media(max-width:768px){.sidenav{display:none;}.main{margin-left:0;}}
+</style>
+</head>
+<body>
+<nav class="sidenav">
+  <a href="../index.html" class="sidenav-logo">Growth<span>Pilot</span></a>
+  <div class="nav-section">
+    <div class="nav-section-label">Main</div>
+    <a class="nav-item" href="dashboard.html"><span>📊</span> Dashboard</a>
+    <a class="nav-item" href="chat.html"><span>💬</span> AI Chat</a>
+    <a class="nav-item" href="form.html"><span>📋</span> New Analysis</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Reports</div>
+    <a class="nav-item active" href="history.html"><span>📁</span> My Reports</a>
+    <a class="nav-item" href="analytics.html"><span>📈</span> Analytics</a>
+    <a class="nav-item" href="settings.html"><span>⚙️</span> Settings</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Account</div>
+    <a class="nav-item" href="#" onclick="logout();return false;"><span>🚪</span> Logout</a>
+  </div>
+  <div class="sidenav-bottom">
+    <a href="form.html" class="new-analysis-btn">+ New Analysis</a>
+  </div>
+</nav>
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">My Reports <span>All Analyses</span></div>
+  </div>
+  <div class="content">
+    <div class="toolbar">
+      <input class="search-box" id="searchBox" placeholder="🔍  Search by title or category..." oninput="filterIdeas()">
+      <select class="filter-sel" id="statusFilter" onchange="filterIdeas()">
+        <option value="">All Status</option>
+        <option value="analyzed">Analyzed</option>
+        <option value="pending">Pending</option>
+      </select>
+      <select class="filter-sel" id="catFilter" onchange="filterIdeas()">
+        <option value="">All Categories</option>
+        <option>Food & Beverage</option>
+        <option>Technology & Software</option>
+        <option>Education & Training</option>
+        <option>Health & Wellness</option>
+        <option>Retail & E-commerce</option>
+        <option>Fashion & Apparel</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div id="tableWrap">
+      <div style="color:rgba(245,240,232,0.3);text-align:center;padding:40px">Loading...</div>
+    </div>
+  </div>
+</div>
+<script src="../js/api.js"></script>
+<script>
+  requireAuth();
+  let allIdeas = [];
+
+  async function loadIdeas() {
+    try {
+      allIdeas = await api.listIdeas() || [];
+      renderTable(allIdeas);
+    } catch(e) {
+      document.getElementById("tableWrap").innerHTML = '<div class="empty-state"><div class="es-icon">⚠️</div><div class="es-title">Could not load</div><p>Make sure the backend is running.</p></div>';
+    }
+  }
+
+  function filterIdeas() {
+    const q = document.getElementById("searchBox").value.toLowerCase();
+    const st = document.getElementById("statusFilter").value;
+    const cat = document.getElementById("catFilter").value;
+    const filtered = allIdeas.filter(i =>
+      (!q || i.title.toLowerCase().includes(q) || (i.category||"").toLowerCase().includes(q)) &&
+      (!st || i.status === st) &&
+      (!cat || (i.category||"") === cat)
+    );
+    renderTable(filtered);
+  }
+
+  function renderTable(ideas) {
+    const wrap = document.getElementById("tableWrap");
+    if (!ideas.length) {
+      wrap.innerHTML = '<div class="empty-state"><div class="es-icon">📂</div><div class="es-title">No ideas found</div><a href="form.html" style="color:var(--amber);text-decoration:none">+ Create your first analysis</a></div>';
+      return;
+    }
+    let html = `<table class="idea-table"><thead><tr>
+      <th>Title</th><th>Category</th><th>Location</th><th>Budget</th><th>Status</th><th>Date</th><th>Actions</th>
+    </tr></thead><tbody>`;
+    ideas.forEach(idea => {
+      html += `<tr onclick="idea.status==='analyzed'&&(window.location.href='chat.html?idea_id=${idea.id}')">
+        <td><strong>${idea.title}</strong><div style="font-size:11px;color:rgba(245,240,232,0.35);margin-top:2px">${(idea.description||"").substring(0,40)}${(idea.description||"").length>40?"...":""}</div></td>
+        <td><span class="cat-pill">${catEmoji(idea.category)} ${idea.category||"General"}</span></td>
+        <td style="color:rgba(245,240,232,0.6)">${idea.location||"—"}</td>
+        <td style="color:var(--amber);font-weight:600">${idea.budget ? formatBudget(idea.budget) : "—"}</td>
+        <td><span class="badge ${idea.status}">${idea.status==="analyzed"?"✅ Analyzed":"⏳ Pending"}</span></td>
+        <td style="color:rgba(245,240,232,0.4);font-size:12px">${timeAgo(idea.created_at)}</td>
+        <td onclick="event.stopPropagation()">
+          <div style="display:flex;gap:6px">
+            ${idea.status==="analyzed"
+              ? `<a href="chat.html?idea_id=${idea.id}" class="action-btn view">View →</a>`
+              : `<button class="action-btn view" onclick="analyzeNow(${idea.id},this)">⚡ Analyze</button>`}
+            <button class="action-btn del" onclick="deleteIdea(${idea.id},this)">🗑</button>
+          </div>
+        </td>
+      </tr>`;
+    });
+    html += "</tbody></table>";
+    wrap.innerHTML = html;
+  }
+
+  async function analyzeNow(id, btn) {
+    btn.textContent = "⏳"; btn.disabled = true;
+    try { await api.analyzeIdea(id); window.location.href = "chat.html?idea_id=" + id; }
+    catch(e) { btn.textContent = "⚡ Analyze"; btn.disabled = false; alert(e.message); }
+  }
+
+  async function deleteIdea(id, btn) {
+    if (!confirm("Delete this idea permanently?")) return;
+    btn.textContent = "..."; btn.disabled = true;
+    try { await api.deleteIdea(id); loadIdeas(); }
+    catch(e) { btn.textContent = "🗑"; btn.disabled = false; alert(e.message); }
+  }
+
+  loadIdeas();
+</script>
+</body>
+</html>

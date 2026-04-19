@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GrowthPilot – Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#0a0a0f;--cream:#f5f0e8;--amber:#f5a623;--amber-deep:#d4860a;--sage:#2d4a3e;--sage-light:#3d6b5a;--panel:#111118;--border:rgba(255,255,255,0.07);}
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--ink);color:var(--cream);font-family:'DM Sans',sans-serif;min-height:100vh;display:grid;grid-template-columns:1fr 1fr;}
+  .brand{background:linear-gradient(145deg,rgba(45,74,62,0.55),rgba(245,166,35,0.07));border-right:1px solid var(--border);display:flex;flex-direction:column;justify-content:center;padding:64px;position:relative;overflow:hidden;}
+  .brand::before{content:'';position:absolute;top:-100px;right:-100px;width:550px;height:550px;background:radial-gradient(circle,rgba(45,74,62,0.5),transparent 70%);pointer-events:none;}
+  .brand::after{content:'';position:absolute;bottom:-80px;left:-60px;width:400px;height:400px;background:radial-gradient(circle,rgba(245,166,35,0.07),transparent 70%);pointer-events:none;}
+  .b-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;margin-bottom:48px;position:relative;z-index:1;text-decoration:none;color:var(--cream);}
+  .b-logo span{color:var(--amber);}
+  .b-title{font-family:'Syne',sans-serif;font-size:clamp(36px,3vw,52px);font-weight:800;line-height:1.05;letter-spacing:-2px;margin-bottom:20px;position:relative;z-index:1;}
+  .b-title .accent{color:var(--amber);}
+  .b-title .outline{-webkit-text-stroke:1.5px var(--sage-light);color:transparent;}
+  .b-sub{font-size:15px;color:rgba(245,240,232,0.5);line-height:1.7;font-weight:300;max-width:380px;margin-bottom:40px;position:relative;z-index:1;}
+  .b-feats{display:flex;flex-direction:column;gap:14px;position:relative;z-index:1;}
+  .b-feat{display:flex;align-items:center;gap:12px;font-size:14px;color:rgba(245,240,232,0.65);}
+  .b-dot{width:7px;height:7px;border-radius:50%;background:var(--amber);flex-shrink:0;}
+  .form-side{display:flex;align-items:center;justify-content:center;padding:48px 40px;}
+  .box{width:100%;max-width:420px;}
+  .box h1{font-family:'Syne',sans-serif;font-size:30px;font-weight:800;letter-spacing:-1px;margin-bottom:6px;}
+  .box .sub{font-size:14px;color:rgba(245,240,232,0.45);margin-bottom:36px;font-weight:300;}
+  .grp{margin-bottom:20px;}
+  .lbl{display:block;font-size:11px;font-weight:700;color:rgba(245,240,232,0.4);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
+  .iw{position:relative;}
+  .ico{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:14px;color:rgba(245,240,232,0.3);pointer-events:none;}
+  .field{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:var(--cream);border-radius:8px;padding:13px 14px 13px 40px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .2s,box-shadow .2s;}
+  .field:focus{border-color:rgba(245,166,35,0.5);box-shadow:0 0 0 3px rgba(245,166,35,0.08);}
+  .field::placeholder{color:rgba(245,240,232,0.22);}
+  .field.shake{animation:shake .4s ease;}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+  .eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:rgba(245,240,232,0.3);font-size:15px;padding:4px;transition:color .2s;}
+  .eye:hover{color:rgba(245,240,232,0.6);}
+  .btn{width:100%;background:var(--amber);color:var(--ink);border:none;border-radius:8px;padding:14px;font-family:'Syne',sans-serif;font-weight:800;font-size:16px;cursor:pointer;transition:all .2s;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px;}
+  .btn:hover{background:var(--amber-deep);transform:translateY(-1px);box-shadow:0 8px 24px rgba(245,166,35,0.25);}
+  .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none;}
+  .err{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#f87171;border-radius:8px;padding:11px 14px;font-size:13px;margin-bottom:20px;display:none;align-items:center;gap:8px;}
+  .divider{display:flex;align-items:center;gap:12px;margin:24px 0;color:rgba(245,240,232,0.2);font-size:12px;}
+  .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+  .link{text-align:center;font-size:13px;color:rgba(245,240,232,0.4);margin-top:16px;}
+  .link a{color:var(--amber);text-decoration:none;font-weight:600;}
+  .link a:hover{color:var(--amber-deep);}
+  .spin{width:16px;height:16px;border:2px solid rgba(10,10,15,0.3);border-top-color:var(--ink);border-radius:50%;animation:spin .6s linear infinite;display:none;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @media(max-width:768px){body{grid-template-columns:1fr;}.brand{display:none;}}
+</style>
+</head>
+<body>
+<div class="brand">
+  <a href="../index.html" class="b-logo">Growth<span>Pilot</span></a>
+  <h2 class="b-title">Your Business<br><span class="accent">Decisions</span><br><span class="outline">Reimagined.</span></h2>
+  <p class="b-sub">GrowthPilot analyzes your idea, budget & market — then delivers a personalized growth roadmap, marketing strategy, and feasibility report.</p>
+  <div class="b-feats">
+    <div class="b-feat"><div class="b-dot"></div>Feasibility analysis in seconds</div>
+    <div class="b-feat"><div class="b-dot"></div>Detailed cost breakdowns</div>
+    <div class="b-feat"><div class="b-dot"></div>Step-by-step growth roadmaps</div>
+    <div class="b-feat"><div class="b-dot"></div>AI Chat for follow-up questions</div>
+  </div>
+</div>
+<div class="form-side">
+  <div class="box">
+    <h1>Welcome back</h1>
+    <p class="sub">Log in to continue your business journey</p>
+    <div class="err" id="errBar">⚠️ <span id="errMsg"></span></div>
+    <div class="grp">
+      <label class="lbl">Email Address</label>
+      <div class="iw"><span class="ico">✉</span>
+      <input type="email" class="field" id="email" placeholder="you@example.com" autocomplete="email"></div>
+    </div>
+    <div class="grp">
+      <label class="lbl">Password</label>
+      <div class="iw"><span class="ico">🔒</span>
+      <input type="password" class="field" id="password" placeholder="Enter your password" autocomplete="current-password">
+      <button type="button" class="eye" id="eyeBtn">👁</button></div>
+    </div>
+    <button class="btn" id="submitBtn" onclick="doLogin()">
+      <span id="btnTxt">Log In →</span><div class="spin" id="spin"></div>
+    </button>
+    <div class="divider">or</div>
+    <div class="link">Don't have an account? <a href="register.html">Create one free</a></div>
+    <div class="link" style="margin-top:8px"><a href="../index.html" style="color:rgba(245,240,232,0.3);font-size:12px">← Back to Home</a></div>
+  </div>
+</div>
+<script src="../js/api.js"></script>
+<script>
+  // Redirect if already logged in
+  if (isLoggedIn()) window.location.href = "dashboard.html";
+
+  document.getElementById("eyeBtn").onclick = function() {
+    const f = document.getElementById("password");
+    f.type = f.type === "password" ? "text" : "password";
+    this.textContent = f.type === "password" ? "👁" : "🙈";
+  };
+
+  document.getElementById("email").addEventListener("keydown", function(e) { if (e.key==="Enter") doLogin(); });
+  document.getElementById("password").addEventListener("keydown", function(e) { if (e.key==="Enter") doLogin(); });
+
+  function showErr(msg) {
+    document.getElementById("errMsg").textContent = msg;
+    document.getElementById("errBar").style.display = "flex";
+    document.getElementById("email").classList.add("shake");
+    document.getElementById("password").classList.add("shake");
+    setTimeout(() => {
+      document.getElementById("email").classList.remove("shake");
+      document.getElementById("password").classList.remove("shake");
+    }, 400);
+  }
+
+  async function doLogin() {
+    const emailVal = document.getElementById("email").value.trim();
+    const passVal  = document.getElementById("password").value;
+    const btn = document.getElementById("submitBtn");
+    const lbl = document.getElementById("btnTxt");
+    const sp  = document.getElementById("spin");
+
+    document.getElementById("errBar").style.display = "none";
+
+    if (!emailVal) { showErr("Please enter your email address."); return; }
+    if (!emailVal.includes("@") || emailVal.split("@")[1].indexOf(".") <= 0) { 
+      showErr("Please enter a valid email address."); return; 
+    }
+    if (!passVal)  { showErr("Please enter your password."); return; }
+
+    btn.disabled = true; lbl.style.display = "none"; sp.style.display = "block";
+
+    try {
+      const d = await api.login(emailVal, passVal);
+      saveAuth(d.access_token, d.user_id, d.name, d.email);
+      window.location.href = "dashboard.html";
+    } catch(e) {
+      showErr(e.message || "Invalid email or password.");
+      btn.disabled = false; lbl.style.display = "block"; sp.style.display = "none";
+    }
+  }
+</script>
+</body>
+</html>

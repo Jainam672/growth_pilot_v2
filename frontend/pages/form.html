@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GrowthPilot – Business Analysis Form</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0a0a0f;
+    --cream: #f5f0e8;
+    --amber: #f5a623;
+    --amber-deep: #d4860a;
+    --sage: #2d4a3e;
+    --sage-light: #3d6b5a;
+    --panel: #111118;
+    --border: rgba(255,255,255,0.08);
+    --error: #f87171;
+    --success: #4ade80;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--ink);
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* TOP */
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 60px;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel);
+    position: sticky; top: 0; z-index: 10;
+  }
+  .header-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 20px; text-decoration: none; color: var(--cream); }
+  .header-logo span { color: var(--amber); }
+  .header-right { display: flex; align-items: center; gap: 16px; }
+  .step-indicator { display: flex; gap: 8px; align-items: center; }
+  .step-dot { width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,0.06); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: rgba(245,240,232,0.4); font-family: 'Syne', sans-serif; transition: all 0.3s; }
+  .step-dot.active { background: var(--amber); color: var(--ink); border-color: var(--amber); }
+  .step-dot.done { background: var(--sage-light); color: var(--cream); border-color: var(--sage-light); }
+  .step-line { width: 24px; height: 1px; background: var(--border); }
+
+  /* MAIN LAYOUT */
+  .page {
+    display: grid; grid-template-columns: 1fr 380px;
+    max-width: 1100px; margin: 0 auto;
+    padding: 60px 40px; gap: 48px; align-items: start;
+  }
+
+  /* FORM SIDE */
+  .form-side { }
+  .form-head { margin-bottom: 48px; }
+  .form-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(245,166,35,0.1); border: 1px solid rgba(245,166,35,0.25);
+    padding: 5px 14px; border-radius: 100px;
+    font-size: 11px; color: var(--amber); letter-spacing: 1.5px; text-transform: uppercase;
+    font-weight: 600; margin-bottom: 20px;
+  }
+  .form-title { font-family: 'Syne', sans-serif; font-size: 40px; font-weight: 800; letter-spacing: -1.5px; line-height: 1.1; margin-bottom: 12px; }
+  .form-title span { color: var(--amber); }
+  .form-sub { color: rgba(245,240,232,0.5); font-size: 15px; line-height: 1.6; }
+
+  /* STEPS */
+  .form-steps { }
+
+  .step-block { display: none; animation: fadeIn 0.4s ease; }
+  .step-block.visible { display: block; }
+  @keyframes fadeIn { from{opacity:0; transform:translateY(16px)} to{opacity:1; transform:translateY(0)} }
+
+  .step-title {
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 16px;
+    margin-bottom: 24px; display: flex; align-items: center; gap: 10px;
+    color: rgba(245,240,232,0.9);
+  }
+  .step-num-badge {
+    width: 28px; height: 28px; border-radius: 8px;
+    background: var(--amber); color: var(--ink);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 800; flex-shrink: 0;
+  }
+
+  .form-group { margin-bottom: 24px; }
+  label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; color: rgba(245,240,232,0.7); letter-spacing: 0.3px; }
+  label span.req { color: var(--amber); }
+
+  .field {
+    width: 100%; padding: 14px 18px;
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px; color: var(--cream);
+    font-family: 'DM Sans', sans-serif; font-size: 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+  }
+  .field:focus { border-color: rgba(245,166,35,0.5); box-shadow: 0 0 0 3px rgba(245,166,35,0.08); }
+  .field.error { border-color: rgba(248,113,113,0.5); }
+  .field option { background: #1a1a25; }
+  textarea.field { resize: vertical; min-height: 110px; line-height: 1.6; }
+
+  .field-hint { font-size: 12px; color: rgba(245,240,232,0.35); margin-top: 6px; }
+  .field-error { font-size: 12px; color: var(--error); margin-top: 6px; display: none; }
+  .field-error.show { display: block; }
+
+  /* Budget slider */
+  .budget-display {
+    background: rgba(245,166,35,0.1); border: 1px solid rgba(245,166,35,0.2);
+    border-radius: 8px; padding: 12px 18px;
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 12px;
+  }
+  .budget-amt { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 24px; color: var(--amber); }
+  .budget-lbl { font-size: 12px; color: rgba(245,240,232,0.4); }
+
+  input[type="range"] {
+    width: 100%; -webkit-appearance: none;
+    height: 4px; border-radius: 4px;
+    background: rgba(255,255,255,0.1); outline: none; cursor: pointer;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--amber); cursor: pointer;
+    box-shadow: 0 2px 8px rgba(245,166,35,0.4);
+  }
+
+  /* Toggle group */
+  .toggle-group { display: flex; flex-wrap: wrap; gap: 10px; }
+  .toggle-opt {
+    padding: 8px 18px; border-radius: 100px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.03);
+    color: rgba(245,240,232,0.6); font-size: 13px;
+    cursor: pointer; transition: all 0.2s; user-select: none;
+  }
+  .toggle-opt:hover { border-color: rgba(245,166,35,0.3); color: var(--cream); }
+  .toggle-opt.selected { background: rgba(245,166,35,0.15); border-color: rgba(245,166,35,0.5); color: var(--amber); font-weight: 600; }
+
+  /* Feature checkboxes */
+  .check-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .check-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 14px;
+    background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+    border-radius: 10px; cursor: pointer; transition: all 0.2s;
+    font-size: 13px; color: rgba(245,240,232,0.65);
+  }
+  .check-item:hover { border-color: rgba(245,166,35,0.2); }
+  .check-item input { display: none; }
+  .check-box {
+    width: 18px; height: 18px; border-radius: 5px;
+    border: 1.5px solid rgba(255,255,255,0.2);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all 0.2s; font-size: 11px;
+  }
+  .check-item input:checked ~ .check-box { background: var(--amber); border-color: var(--amber); color: var(--ink); }
+  .check-item input:checked ~ .check-box::after { content: '✓'; font-weight: 800; }
+  .check-item:has(input:checked) { border-color: rgba(245,166,35,0.3); background: rgba(245,166,35,0.06); }
+
+  /* Navigation buttons */
+  .form-nav { display: flex; gap: 12px; margin-top: 36px; }
+  .btn-back {
+    padding: 14px 28px; border-radius: 8px;
+    background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+    color: rgba(245,240,232,0.6); font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: 14px; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-back:hover { background: rgba(255,255,255,0.09); color: var(--cream); }
+  .btn-next {
+    flex: 1; padding: 14px 28px; border-radius: 8px;
+    background: var(--amber); border: none;
+    color: var(--ink); font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 16px; cursor: pointer; transition: all 0.25s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-next:hover { background: var(--amber-deep); transform: translateY(-1px); }
+
+  /* Progress */
+  .progress-bar-wrap { height: 3px; background: rgba(255,255,255,0.06); border-radius: 3px; margin-bottom: 40px; }
+  .progress-bar { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--sage-light), var(--amber)); transition: width 0.5s ease; }
+
+  /* SIDE PANEL */
+  .info-panel {
+    position: sticky; top: 100px;
+  }
+  .info-card {
+    background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+    border-radius: 16px; padding: 28px; margin-bottom: 20px;
+  }
+  .info-card-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .analysis-items { display: flex; flex-direction: column; gap: 12px; }
+  .analysis-item { display: flex; align-items: center; gap: 12px; }
+  .ai-icon { font-size: 20px; flex-shrink: 0; }
+  .ai-text { font-size: 13px; color: rgba(245,240,232,0.6); line-height: 1.4; }
+  .ai-text strong { color: var(--cream); font-size: 13px; display: block; margin-bottom: 2px; }
+
+  .preview-card {
+    background: rgba(45,74,62,0.2); border: 1px solid rgba(45,74,62,0.4);
+    border-radius: 16px; padding: 28px;
+  }
+  .preview-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: var(--amber); margin-bottom: 16px; }
+  .preview-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .preview-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .preview-key { font-size: 12px; color: rgba(245,240,232,0.4); }
+  .preview-val { font-size: 13px; font-weight: 500; color: var(--cream); }
+  .preview-val.empty { color: rgba(245,240,232,0.25); font-style: italic; font-size: 12px; }
+
+  /* Success screen */
+  .success-screen { display: none; text-align: center; padding: 60px 20px; animation: fadeIn 0.6s ease; }
+  .success-screen.show { display: block; }
+  .success-icon { font-size: 64px; margin-bottom: 24px; }
+  .success-title { font-family: 'Syne', sans-serif; font-size: 32px; font-weight: 800; letter-spacing: -1px; margin-bottom: 12px; }
+  .success-sub { color: rgba(245,240,232,0.5); margin-bottom: 40px; line-height: 1.6; }
+  .success-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .success-btn {
+    padding: 14px 28px; border-radius: 8px;
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px;
+    text-decoration: none; transition: all 0.2s; cursor: pointer; border: none;
+  }
+  .success-btn.primary { background: var(--amber); color: var(--ink); }
+  .success-btn.primary:hover { background: var(--amber-deep); }
+  .success-btn.secondary { background: rgba(255,255,255,0.05); color: var(--cream); border: 1px solid var(--border); }
+  .success-btn.secondary:hover { background: rgba(255,255,255,0.09); }
+
+  @media (max-width: 900px) {
+    header { padding: 16px 20px; }
+    .page { grid-template-columns: 1fr; padding: 32px 20px; }
+    .info-panel { position: static; }
+    .check-group { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="../index.html" class="header-logo">Growth<span>Pilot</span></a>
+  <div class="header-right">
+    <div class="step-indicator">
+      <div class="step-dot active" id="dot1">1</div>
+      <div class="step-line"></div>
+      <div class="step-dot" id="dot2">2</div>
+      <div class="step-line"></div>
+      <div class="step-dot" id="dot3">3</div>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <!-- FORM SIDE -->
+  <div class="form-side">
+    <div class="form-head">
+      <div class="form-badge">Business Analysis Form</div>
+      <h1 class="form-title">Tell us about your <span>idea.</span></h1>
+      <p class="form-sub">Answer a few questions and our AI will generate a complete business report in seconds.</p>
+    </div>
+
+    <div class="progress-bar-wrap">
+      <div class="progress-bar" id="progressBar" style="width:33%"></div>
+    </div>
+
+    <!-- STEP 1 -->
+    <div class="step-block visible" id="step1">
+      <div class="step-title"><div class="step-num-badge">1</div> Your Business Idea</div>
+
+      <div class="form-group">
+        <label for="businessIdea">Describe your business idea <span class="req">*</span></label>
+        <textarea class="field" id="businessIdea" placeholder="e.g. I want to open a sustainable clothing brand targeting college students in Ahmedabad..."></textarea>
+        <div class="field-hint">Be as detailed as possible for the most accurate analysis.</div>
+        <div class="field-error" id="ideaError">Please describe your business idea.</div>
+      </div>
+
+      <div class="form-group">
+        <label>Business Category <span class="req">*</span></label>
+        <select class="field" id="category">
+          <option value="">Select a category</option>
+          <option>Food & Beverage</option>
+          <option>Retail & E-commerce</option>
+          <option>Technology & Software</option>
+          <option>Education & Training</option>
+          <option>Health & Wellness</option>
+          <option>Fashion & Apparel</option>
+          <option>Agriculture & Farming</option>
+          <option>Construction & Real Estate</option>
+          <option>Services & Consulting</option>
+          <option>Manufacturing</option>
+          <option>Tourism & Travel</option>
+          <option>Other</option>
+        </select>
+        <div class="field-error" id="categoryError">Please select a category.</div>
+      </div>
+
+      <div class="form-group">
+        <label>Business Stage</label>
+        <div class="toggle-group" id="stageGroup">
+          <div class="toggle-opt selected">Just an idea</div>
+          <div class="toggle-opt">Planning phase</div>
+          <div class="toggle-opt">Launched (< 1yr)</div>
+          <div class="toggle-opt">Existing business</div>
+        </div>
+      </div>
+
+      <div class="form-nav">
+        <button class="btn-next" onclick="nextStep(1)">Next: Location & Budget →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="step-block" id="step2">
+      <div class="step-title"><div class="step-num-badge">2</div> Location & Budget</div>
+
+      <div class="form-group">
+        <label for="location">Business Location <span class="req">*</span></label>
+        <input type="text" class="field" id="location" placeholder="e.g. Ahmedabad, Gujarat">
+        <div class="field-hint">City, state, or country where you plan to operate.</div>
+        <div class="field-error" id="locationError">Please enter a location.</div>
+      </div>
+
+      <div class="form-group">
+        <label>Available Budget</label>
+        <div class="budget-display">
+          <div>
+            <div class="budget-amt" id="budgetDisplay">₹1,00,000</div>
+            <div class="budget-lbl">Total investment budget</div>
+          </div>
+          <div style="font-size:24px">💰</div>
+        </div>
+        <input type="range" id="budgetSlider" min="10000" max="5000000" step="5000" value="100000" oninput="updateBudget()">
+        <div class="field-hint" style="display:flex;justify-content:space-between"><span>₹10K</span><span>₹50L+</span></div>
+      </div>
+
+      <div class="form-group">
+        <label>Target Market</label>
+        <div class="toggle-group" id="marketGroup">
+          <div class="toggle-opt selected">Local (City)</div>
+          <div class="toggle-opt">Regional (State)</div>
+          <div class="toggle-opt">National</div>
+          <div class="toggle-opt">International</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="targetCustomer">Target Customer</label>
+        <input type="text" class="field" id="targetCustomer" placeholder="e.g. College students aged 18-24, budget-conscious">
+      </div>
+
+      <div class="form-nav">
+        <button class="btn-back" onclick="prevStep(2)">← Back</button>
+        <button class="btn-next" onclick="nextStep(2)">Next: Analysis Options →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="step-block" id="step3">
+      <div class="step-title"><div class="step-num-badge">3</div> Analysis Preferences</div>
+
+      <div class="form-group">
+        <label>What should the AI analyze? <span class="req">*</span></label>
+        <div class="check-group">
+          <label class="check-item">
+            <input type="checkbox" checked>
+            <div class="check-box"></div>
+            📊 Feasibility Analysis
+          </label>
+          <label class="check-item">
+            <input type="checkbox" checked>
+            <div class="check-box"></div>
+            💰 Cost Estimation
+          </label>
+          <label class="check-item">
+            <input type="checkbox" checked>
+            <div class="check-box"></div>
+            🗺️ Growth Roadmap
+          </label>
+          <label class="check-item">
+            <input type="checkbox" checked>
+            <div class="check-box"></div>
+            📣 Marketing Strategy
+          </label>
+          <label class="check-item">
+            <input type="checkbox">
+            <div class="check-box"></div>
+            ⚠️ Risk Analysis
+          </label>
+          <label class="check-item">
+            <input type="checkbox">
+            <div class="check-box"></div>
+            🏆 Competitor Research
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Report Language</label>
+        <select class="field" id="reportLang">
+          <option>English</option>
+          <option>Hindi (हिंदी)</option>
+          <option>Gujarati (ગુજરાતી)</option>
+          <option>Tamil (தமிழ்)</option>
+          <option>Telugu (తెలుగు)</option>
+          <option>Marathi (मराठी)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="additionalNotes">Additional Notes (Optional)</label>
+        <textarea class="field" id="additionalNotes" rows="3" placeholder="Any specific concerns, constraints, or questions you want the AI to address..."></textarea>
+      </div>
+
+      <div class="form-nav">
+        <button class="btn-back" onclick="prevStep(3)">← Back</button>
+        <button class="btn-next" onclick="submitForm()" id="submitBtn">
+          <span id="submitText">🚀 Generate Analysis</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div class="success-screen" id="successScreen">
+      <div class="success-icon">✅</div>
+      <h2 class="success-title">Analysis Ready!</h2>
+      <p class="success-sub">Your business analysis has been generated. Head to the AI Chat to explore your results, or view your full report on the dashboard.</p>
+      <div class="success-btns">
+        <a href="chat.html" class="success-btn primary" id="viewAnalysisBtn">💬 View Analysis</a>
+        <a href="dashboard.html" class="success-btn secondary">📊 Open Dashboard</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- INFO PANEL -->
+  <div class="info-panel">
+    <div class="info-card">
+      <div class="info-card-title">📦 What you'll receive</div>
+      <div class="analysis-items">
+        <div class="analysis-item">
+          <div class="ai-icon">📊</div>
+          <div class="ai-text"><strong>Feasibility Score</strong>Market viability & success probability</div>
+        </div>
+        <div class="analysis-item">
+          <div class="ai-icon">💰</div>
+          <div class="ai-text"><strong>Cost Breakdown</strong>Detailed expense categories & estimates</div>
+        </div>
+        <div class="analysis-item">
+          <div class="ai-icon">🗺️</div>
+          <div class="ai-text"><strong>90-Day Roadmap</strong>Step-by-step launch milestones</div>
+        </div>
+        <div class="analysis-item">
+          <div class="ai-icon">📣</div>
+          <div class="ai-text"><strong>Marketing Plan</strong>Channels, tactics & content ideas</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="preview-card" id="previewCard">
+      <div class="preview-title">📋 Your Input Summary</div>
+      <div class="preview-item"><div class="preview-key">Business Idea</div><div class="preview-val empty" id="prev-idea">Not filled yet</div></div>
+      <div class="preview-item"><div class="preview-key">Category</div><div class="preview-val empty" id="prev-cat">—</div></div>
+      <div class="preview-item"><div class="preview-key">Location</div><div class="preview-val empty" id="prev-loc">—</div></div>
+      <div class="preview-item"><div class="preview-key">Budget</div><div class="preview-val" id="prev-budget">₹1,00,000</div></div>
+      <div class="preview-item"><div class="preview-key">Market</div><div class="preview-val" id="prev-market">Local (City)</div></div>
+    </div>
+  </div>
+</div>
+
+<script src="../js/api.js"></script>
+<script>
+  requireAuth();
+  let currentStep = 1;
+  let createdIdeaId = null;
+
+  function nextStep(from) {
+    if (from === 1) {
+      const idea = document.getElementById('businessIdea').value.trim();
+      const cat = document.getElementById('category').value;
+      if (!idea) { showErr('ideaError', 'businessIdea'); return; }
+      if (!cat) { showErr('categoryError', 'category'); return; }
+      clearErr('ideaError', 'businessIdea'); clearErr('categoryError', 'category');
+      updatePreview();
+    }
+    if (from === 2) {
+      const loc = document.getElementById('location').value.trim();
+      if (!loc) { showErr('locationError', 'location'); return; }
+      clearErr('locationError', 'location');
+      updatePreview();
+    }
+    currentStep = from + 1;
+    showStep(currentStep);
+    updateIndicators();
+    updateProgress();
+  }
+
+  function prevStep(from) {
+    currentStep = from - 1;
+    showStep(currentStep);
+    updateIndicators();
+    updateProgress();
+  }
+
+  function showStep(n) {
+    document.querySelectorAll('.step-block').forEach(b => b.classList.remove('visible'));
+    const el = document.getElementById('step' + n);
+    if (el) el.classList.add('visible');
+  }
+
+  function updateIndicators() {
+    for (let i = 1; i <= 3; i++) {
+      const dot = document.getElementById('dot' + i);
+      dot.className = 'step-dot';
+      if (i < currentStep) dot.classList.add('done');
+      else if (i === currentStep) dot.classList.add('active');
+    }
+  }
+
+  function updateProgress() {
+    const pct = (currentStep / 3) * 100;
+    document.getElementById('progressBar').style.width = pct + '%';
+  }
+
+  function showErr(errId, fieldId) {
+    document.getElementById(errId).classList.add('show');
+    document.getElementById(fieldId).classList.add('error');
+  }
+  function clearErr(errId, fieldId) {
+    document.getElementById(errId).classList.remove('show');
+    document.getElementById(fieldId).classList.remove('error');
+  }
+
+  function updateBudget() {
+    const val = parseInt(document.getElementById('budgetSlider').value);
+    const fmt = val >= 100000 ? '₹' + (val/100000).toFixed(val%100000===0?0:1) + 'L' :
+                val >= 1000 ? '₹' + (val/1000).toFixed(0) + 'K' : '₹' + val;
+    document.getElementById('budgetDisplay').textContent = fmt;
+    document.getElementById('prev-budget').textContent = fmt;
+  }
+
+  // Toggle groups
+  document.querySelectorAll('.toggle-group').forEach(group => {
+    group.querySelectorAll('.toggle-opt').forEach(opt => {
+      opt.addEventListener('click', () => {
+        group.querySelectorAll('.toggle-opt').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        if (group.id === 'marketGroup') {
+          document.getElementById('prev-market').textContent = opt.textContent;
+          document.getElementById('prev-market').classList.remove('empty');
+        }
+      });
+    });
+  });
+
+  function updatePreview() {
+    const idea = document.getElementById('businessIdea').value.trim();
+    const cat = document.getElementById('category').value;
+    const loc = document.getElementById('location').value.trim();
+
+    const prevIdea = document.getElementById('prev-idea');
+    if (idea) { prevIdea.textContent = idea.substring(0,40) + (idea.length>40?'...':''); prevIdea.classList.remove('empty'); }
+
+    const prevCat = document.getElementById('prev-cat');
+    if (cat) { prevCat.textContent = cat; prevCat.classList.remove('empty'); }
+
+    const prevLoc = document.getElementById('prev-loc');
+    if (loc) { prevLoc.textContent = loc; prevLoc.classList.remove('empty'); }
+  }
+
+  async function submitForm() {
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    document.getElementById('submitText').textContent = '⏳ Saving Idea...';
+
+    try {
+      const budgetVal = parseInt(document.getElementById('budgetSlider').value);
+      const stage = document.querySelector('#stageGroup .toggle-opt.selected')?.textContent || 'idea';
+      const market = document.querySelector('#marketGroup .toggle-opt.selected')?.textContent || 'Local';
+
+      // 1. Create idea
+      const ideaData = {
+        title: document.getElementById('businessIdea').value.trim().substring(0,80),
+        description: document.getElementById('businessIdea').value.trim(),
+        category: document.getElementById('category').value,
+        budget: String(budgetVal),
+        location: document.getElementById('location').value.trim(),
+        experience_level: stage
+      };
+      const idea = await api.createIdea(ideaData);
+      createdIdeaId = idea.id;
+
+      document.getElementById('submitText').textContent = '⚡ Running AI Analysis...';
+
+      // 2. Trigger AI analysis
+      await api.analyzeIdea(idea.id);
+
+      // 3. Show success
+      document.querySelectorAll('.step-block').forEach(b => b.classList.remove('visible'));
+      document.getElementById('successScreen').classList.add('show');
+      document.getElementById('progressBar').style.width = '100%';
+      document.querySelectorAll('.step-dot').forEach(d => { d.className = 'step-dot done'; });
+
+      // Link to the result
+      document.getElementById('viewAnalysisBtn').href = `chat.html?idea_id=${idea.id}`;
+
+    } catch(e) {
+      document.getElementById('submitText').textContent = '🚀 Generate Analysis';
+      btn.disabled = false;
+      alert('Error: ' + (e.message || 'Something went wrong. Please try again.'));
+    }
+  }
+
+  // Live preview updates
+  document.getElementById('businessIdea').addEventListener('input', updatePreview);
+  document.getElementById('category').addEventListener('change', updatePreview);
+  document.getElementById('location').addEventListener('input', updatePreview);
+</script>
+</body>
+</html>
